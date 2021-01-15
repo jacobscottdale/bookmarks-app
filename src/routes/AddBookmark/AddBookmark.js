@@ -1,64 +1,62 @@
-import React, { Component } from  'react';
-import config from '../config'
-import './AddBookmark.css';
+import React, { Component } from 'react';
+import BookmarksContext from 'BookmarksContext';
+import config from 'config';
+import 'routes/AddBookmark/AddBookmark.css';
 
 const Required = () => (
   <span className='AddBookmark__required'>*</span>
-)
+);
 
 class AddBookmark extends Component {
-  static defaultProps = {
-    onAddBookmark: () => {}
-  };
+  static contextType = BookmarksContext;
 
   state = {
     error: null,
   };
 
   handleSubmit = e => {
-    e.preventDefault()
-    // get the form fields from the event
-    const { title, url, description, rating } = e.target
+    e.preventDefault();
+    const { title, url, description, rating } = e.target;
     const bookmark = {
       title: title.value,
       url: url.value,
       description: description.value,
-      rating: rating.value,
-    }
-    this.setState({ error: null })
-    fetch(config.API_ENDPOINT, {
+      rating: Number(rating.value),
+    };
+    this.setState({ error: null });
+    fetch(config.REACT_APP_API_ENDPOINT, {
       method: 'POST',
       body: JSON.stringify(bookmark),
       headers: {
         'content-type': 'application/json',
-        'authorization': `bearer ${config.API_KEY}`
+        'authorization': `bearer ${config.REACT_APP_API_KEY}`
       }
     })
       .then(res => {
         if (!res.ok) {
-          // get the error message from the response,
-          return res.json().then(error => {
-            // then throw it
-            throw error
-          })
+          return res.json().then(error => Promise.reject(error));
         }
-        return res.json()
+        return res.json();
       })
       .then(data => {
-        title.value = ''
-        url.value = ''
-        description.value = ''
-        rating.value = ''
-        this.props.onAddBookmark(data)
+        title.value = '';
+        url.value = '';
+        description.value = '';
+        rating.value = '';
+        this.context.addBookmark(data);
+        this.props.history.push('/')
       })
       .catch(error => {
-        this.setState({ error })
-      })
+        this.setState({ error });
+      });
+  };
+
+  handleClickCancel = () => {
+    this.props.history.push('/')
   }
 
   render() {
-    const { error } = this.state
-    const { onClickCancel } = this.props
+    const { error } = this.state;
     return (
       <section className='AddBookmark'>
         <h2>Create a bookmark</h2>
@@ -123,7 +121,7 @@ class AddBookmark extends Component {
             />
           </div>
           <div className='AddBookmark__buttons'>
-            <button type='button' onClick={onClickCancel}>
+            <button type='button' onClick={this.handleClickCancel}>
               Cancel
             </button>
             {' '}

@@ -2,6 +2,7 @@
   padding: 5px;
   margin-bottom: 10px;
   box-shadow: 0 0 1px 1px rgba(0,0,0,0.2);
+  border-radius: 5px;
 }
 
 .BookmarkItem__title {
@@ -22,11 +23,25 @@
   margin: 4px 0;
 }
 
-.AddBookmarkItem__required {
-  color: #b00c0c;
-}
-
 .BookmarkItem__buttons {
   font-size: .8em;
   text-align: right;
+}
+
+.BookmarkItem__buttons > button, .BookmarkItem__buttons > a {
+  display: inline;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: black;
+  margin: 0;
+}
+
+.BookmarkItem__buttons > button {
+  background-color: #FF5733;
+}
+
+.BookmarkItem__buttons > a {
+  background-color: #33FF47;
 }
